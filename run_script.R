@@ -32,7 +32,7 @@ for(k in seq_along(OM_name)) { ######### Loop over operating model
     if(i == 4) myOM@beta <- c(1.5, 3)
     if(i == 5) myOM@cpars$D <- 2 * myOM@cpars$D
     if(i == 6) {
-      set.seed(seed[k])
+      set.seed(seeds[k])
       M_mult <- rbinom(myOM@proyears * myOM@nsim, 1, 0.1) * pmin(exp(rnorm(myOM@proyears * myOM@nsim, 0, 2)), 4)
       M_y <- myOM@M[1] * (1 + M_mult)
       M_array_hist <- array(myOM@M[1], dim = c(myOM@nsim, myOM@maxage, myOM@nyears))
@@ -53,7 +53,7 @@ for(k in seq_along(OM_name)) { ######### Loop over operating model
     
     ######## Buffered interim MPs
     myOM@interval <- 1
-    MSE_batch_3 <- runMSE(myOM, MPs = c("buffer_iMP_5", "buffer_iMP_10"), parallel = TRUE, PPD = TRUE, ntrials = 200)
+    MSE_batch_3 <- runMSE(myOM, MPs = c("iMP_buffer_5", "iMP_buffer_10"), parallel = TRUE, PPD = TRUE, ntrials = 200)
     
     ######## Projection MPs
     myOM@interval <- 1

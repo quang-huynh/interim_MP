@@ -1,7 +1,7 @@
 
 
 interim_MP <- eval(bquote(function(x, Data, reps = 1, assessment_interval, HCR = HCR_MSY, SCA_arg = list(I_type = "VB", CAA_multiplier = 20), 
-                                   I_smooth = c("none", "loess", "mean", "buffer"), smooth_par = NULL) {
+                                   I_smooth = c("none", "loess", "mean", "buffer"), smooth_par = NULL, use_ramp = FALSE, cap_TAC = FALSE) {
   dependencies <- .(MSEtool:::get_dependencies("SCA"))
   I_smooth <- match.arg(I_smooth)
   
@@ -75,6 +75,14 @@ interim_MP <- eval(bquote(function(x, Data, reps = 1, assessment_interval, HCR =
     } else {
       VB_curr <- as.numeric(new_Index/q_update)
       new_TAC <- Data@Misc[[x]]$UMSY * VB_curr
+    }
+    
+    if (cap_TAC) {
+      TAC_used <- max(new_TAC, Data@Misc[[x]]$MSY)
+    } else TAC_used <- new_TAC
+    
+    if (use_ramp) { #40-10 control rule based on previous assessment
+      TAC_used <- HCRlin(Data@Misc[[x]]$SSB_dep, 0.1, 0.4) * TAC_used
     }
     
     Rec <- new("Rec")
